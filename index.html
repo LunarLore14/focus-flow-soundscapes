@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Focus Flow & Soundscapes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="sidebar card">
+        <div class="sidebar-header">
+          <div>
+            <p class="eyebrow">Your flow</p>
+            <h2>Task List</h2>
+          </div>
+          <button class="small-btn" id="addTaskBtn">+ Add</button>
+        </div>
+
+        <form id="taskForm" class="task-form hidden">
+          <input id="taskInput" type="text" placeholder="Add a task" maxlength="80" />
+          <button type="submit">Save</button>
+        </form>
+
+        <ul id="taskList" class="task-list"></ul>
+
+        <div class="habit-box">
+          <div class="section-header">
+            <h3>Habit Tracker</h3>
+            <button class="small-btn" id="addHabitBtn">+ Habit</button>
+          </div>
+          <form id="habitForm" class="task-form hidden">
+            <input id="habitInput" type="text" placeholder="New habit" maxlength="40" />
+            <button type="submit">Add</button>
+          </form>
+          <div id="habitList" class="habit-list"></div>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header>
+          <div class="title-group">
+            <h1>Focus Flow</h1>
+            <p>Personalized study playlists & research-backed audio</p>
+          </div>
+
+          <div class="header-actions">
+            <button class="toggle-btn" id="adhdBtn" onclick="toggleADHD()">⚡ ADHD Mode</button>
+            <button class="toggle-btn" id="dyslexiaBtn" onclick="toggleDyslexia()">📖 Dyslexia Mode</button>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Theme</button>
+          </div>
+        </header>
+
+        <div class="app-grid">
+          <div>
+            <div class="card">
+              <div class="card-title">🎯 1. Choose Focus Goal</div>
+              <div class="mode-selector">
+                <div class="mode-card active" data-mode="study" onclick="selectMode('study')">
+                  <div class="mode-icon">📚</div>
+                  <div class="mode-name">Study & Reading</div>
+                </div>
+                <div class="mode-card" data-mode="deepwork" onclick="selectMode('deepwork')">
+                  <div class="mode-icon">🧠</div>
+                  <div class="mode-name">Deep Work</div>
+                </div>
+                <div class="mode-card" data-mode="creative" onclick="selectMode('creative')">
+                  <div class="mode-icon">🎨</div>
+                  <div class="mode-name">Creativity</div>
+                </div>
+                <div class="mode-card" data-mode="learning" onclick="selectMode('learning')">
+                  <div class="mode-icon">💡</div>
+                  <div class="mode-name">Learning</div>
+                </div>
+              </div>
+
+              <div class="card-title">🎵 2. Preferred Music Vibe</div>
+              <div class="genre-pills" id="genrePills">
+                <div class="pill active" data-genre="lofi" onclick="selectGenre('lofi')">Lo-Fi Beats</div>
+                <div class="pill" data-genre="kpop" onclick="selectGenre('kpop')">K-Pop Instrumental</div>
+                <div class="pill" data-genre="rock" onclick="selectGenre('rock')">Acoustic / Soft Rock</div>
+                <div class="pill" data-genre="classical" onclick="selectGenre('classical')">Classical / Cinematic</div>
+                <div class="pill" data-genre="ambient" onclick="selectGenre('ambient')">Pure Ambient</div>
+              </div>
+
+              <div class="playlist-wrapper">
+                <div class="section-header small-gap">
+                  <h3>Playlist Categories</h3>
+                  <button id="addCategoryBtn" class="small-btn">+ Category</button>
+                </div>
+                <div class="playlist-tabs" id="playlistTabs"></div>
+                <form id="categoryForm" class="task-form hidden">
+                  <input id="categoryInput" type="text" maxlength="30" placeholder="New playlist category" />
+                  <button type="submit">Add</button>
+                </form>
+                <div id="playlistGrid" class="playlist-grid"></div>
+              </div>
+
+              <div class="player-container">
+                <iframe id="youtubePlayer" src="https://www.youtube.com/embed/jfKfPfyJRdk?enablejsapi=1" allow="autoplay"></iframe>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="margin-bottom: 20px;">
+              <div class="card-title">🎧 Ambient Sound Generator</div>
+              <p class="muted-copy">Synthesized directly in your browser — no loading required.</p>
+
+              <div class="sound-row">
+                <span class="sound-label">🌊 Brown Noise</span>
+                <input type="range" class="sound-slider" id="brownNoise" min="0" max="100" value="0" oninput="updateAudio()" />
+              </div>
+              <div class="sound-row">
+                <span class="sound-label">🌧️ Soft Rain</span>
+                <input type="range" class="sound-slider" id="rainNoise" min="0" max="100" value="0" oninput="updateAudio()" />
+              </div>
+              <div class="sound-row">
+                <span class="sound-label">🧠 Alpha Tone</span>
+                <input type="range" class="sound-slider" id="alphaTone" min="0" max="100" value="0" oninput="updateAudio()" />
+              </div>
+
+              <div class="audio-upload">
+                <button class="upload-btn" onclick="document.getElementById('audioUpload').click()">🎵 Add custom audio</button>
+                <input type="file" id="audioUpload" accept="audio/*" style="display: none;" onchange="handleAudioUpload(event)" />
+                <div class="upload-status" id="uploadStatus">No custom audio selected</div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+              <div class="card-title">⏱️ Pomodoro Timer</div>
+
+              <div class="session-buttons">
+                <button class="session-btn active" data-session="focus" onclick="setSession('focus')">Focus 25</button>
+                <button class="session-btn" data-session="shortBreak" onclick="setSession('shortBreak')">Short Break</button>
+                <button class="session-btn" data-session="longBreak" onclick="setSession('longBreak')">Long Break</button>
+              </div>
+
+              <div class="timer-ring-wrap">
+                <div class="timer-ring" id="timerRing" style="--progress: 0;">
+                  <div class="timer-ring-inner">
+                    <div class="timer-status" id="timerStatus">Focus Session</div>
+                    <div class="round-counter" id="roundCounter">Round 1 of 4</div>
+                    <div class="timer-display" id="timer">25:00</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="progress-wrap">
+                <div class="progress-meta">
+                  <span>Progress</span>
+                  <span id="progressLabel">0%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progressFill"></div>
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                <div class="stat-box">
+                  <div class="value" id="streakValue">0</div>
+                  <div class="label">Streak</div>
+                </div>
+                <div class="stat-box">
+                  <div class="value" id="focusValue">0</div>
+                  <div class="label">Focuses</div>
+                </div>
+                <div class="stat-box">
+                  <div class="value" id="todayValue">0m</div>
+                  <div class="label">Today</div>
+                </div>
+              </div>
+
+              <div class="timer-controls" style="margin-top: 18px;">
+                <button class="btn btn-primary" onclick="toggleTimer()">Start / Pause</button>
+                <button class="btn btn-secondary" onclick="resetTimer()">Reset</button>
+                <button class="btn btn-warning" onclick="skipSession()">Skip</button>
+              </div>
+
+              <div class="history-box">
+                <div class="card-title" style="margin-bottom: 0;">📜 Session History</div>
+                <ul class="history-list" id="historyList"></ul>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">📝 Quick Goals</div>
+              <textarea class="notes-input" id="notesInput" placeholder="Write down your main goal for this study session..."></textarea>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div class="floating-habit-tracker" id="floatingHabitTracker">
+      <div class="floating-header">
+        <span>✅ Habit Flow</span>
+      </div>
+      <div id="floatingHabitList" class="floating-habit-list"></div>
+    </div>
+
+    <div class="gift-sticker" id="giftSticker">✨ Focus gift unlocked!</div>
+
+    <div class="modal hidden" id="summaryModal" aria-modal="true" role="dialog">
+      <div class="modal-card">
+        <div class="modal-badge">🎉 Focus Summary</div>
+        <h3>Your study session just finished</h3>
+        <div class="summary-grid">
+          <div>
+            <span class="summary-label">Focus Minutes</span>
+            <strong id="summaryMinutes">25</strong>
+          </div>
+          <div>
+            <span class="summary-label">Tasks Done</span>
+            <strong id="summaryTasks">0</strong>
+          </div>
+          <div>
+            <span class="summary-label">Habit Wins</span>
+            <strong id="summaryHabits">0</strong>
+          </div>
+        </div>
+        <p id="summaryMessage">Nice work. You kept your attention on the task.</p>
+        <button class="btn btn-primary" onclick="closeSummary()">Close</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
